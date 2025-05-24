@@ -4,7 +4,7 @@ import app from "../app.js";
 import { ERROR } from "../constant/error.js";
 import path from "path";
 import { correctSign, createUser } from "./common.js";
-import { truncateAllTables } from "../config/index.js";
+import { makeAllPrerequisiteConnection, truncateAllTables } from "../config/index.js";
 
 const globalUser = {
   name: "some",
