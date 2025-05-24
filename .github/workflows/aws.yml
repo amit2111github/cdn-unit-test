@@ -7,12 +7,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      ENV: test
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: ⬇️ Create .env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > backend/.env
+          echo "ENV=test" >> backend/.env
+          echo "printing .env file"
+          cat backend/.env
 
       - name: Use Node.js
         uses: actions/setup-node@v4
