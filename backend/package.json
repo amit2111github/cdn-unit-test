@@ -1,0 +1,31 @@
+{
+  "name": "cdn-unit",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "vitest",
+    "dev": "pm2 restart cdn-unit || pm2 start server.js --name cdn-unit",
+    "run": "pm2 restart cdn-unit || pm2 start server.js --name cdn-unit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-fileupload": "^1.5.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.0",
+    "pm2": "^6.0.6"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.1",
+    "vitest": "^3.1.4"
+  }
+}

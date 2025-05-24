@@ -1,0 +1,82 @@
+name: Run Vitest Tests
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ENV: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🧪 Run Vitest
+        run: npm run test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      ENV: prod
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Get EC2 Public IP by tag
+        id: get-ip
+        run: |
+          IP=$(aws ec2 describe-instances \
+          --filters "Name=tag:Name,Values=${{ secrets.EC2_TAG_NAME }}" "Name=instance-state-name,Values=running" \
+          --query "Reservations[0].Instances[0].PublicIpAddress" \
+          --output text)
+          echo "EC2_IP=$IP" >> $GITHUB_ENV
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 🔐 Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $EC2_IP >> ~/.ssh/known_hosts
+
+      - name: 🚀 Deploy to EC2
+        run: |
+          echo "ip address is $EC2_IP"
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@$EC2_IP << 'EOF'
+            set -e
+            mkdir -p /home/ubuntu/app
+            cd /home/ubuntu/app
+            if [ ! -d "./.git" ]; then
+              echo "No Git repo found. Cloning..."
+              echo "cloning "
+              git clone "https://github.com/amit2111github/cdn-unit-test" .
+            fi
+            git stash
+            git pull origin main
+            npm install --production
+            npm run run
+          EOF
