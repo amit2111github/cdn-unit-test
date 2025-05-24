@@ -21,11 +21,11 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm install
-        working-directory: cdn-unit-test/backend
+        working-directory: backend
 
       - name: 🧪 Run Vitest
         run: npm run test
-        working-directory: cdn-unit-test/backend
+        working-directory: backend
 
   deploy:
     needs: test
