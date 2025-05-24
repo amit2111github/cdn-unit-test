@@ -85,6 +85,8 @@ jobs:
             git stash
             git pull origin main
             cd backend
+            echo "${{ secrets.ENV_FILE }}" > .env
+            echo "ENV=prod" >> .env
             npm install --production
             npm run run
           EOF
