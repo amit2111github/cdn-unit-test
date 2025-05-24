@@ -20,13 +20,12 @@ jobs:
           node-version: '18'
 
       - name: 📦 Install dependencies
-        
-        run: |
-          cd backend
-          npm install
+        run: npm install
+        working-directory: cdn-unit-test/backend
 
       - name: 🧪 Run Vitest
         run: npm run test
+        working-directory: cdn-unit-test/backend
 
   deploy:
     needs: test
