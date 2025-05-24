@@ -12,6 +12,7 @@ const globalUser = {
   password: "password",
 };
 beforeAll(async () => {
+  await makeAllPrerequisiteConnection();
   await truncateAllTables();
 });
 afterAll(async () => {

@@ -13,7 +13,7 @@ import request from "supertest";
 import app from "../app.js";
 import { ERROR } from "../constant/error.js";
 import { correctSign, createUser, user } from "./common.js";
-import { truncateAllTables } from "../config/index.js";
+import { makeAllPrerequisiteConnection, truncateAllTables } from "../config/index.js";
 
 const globalUser = {
   name: "some1",
@@ -22,6 +22,7 @@ const globalUser = {
 };
 beforeAll(async () => {
   await truncateAllTables();
+  await makeAllPrerequisiteConnection();
 });
 afterAll(async () => {
   await truncateAllTables();
