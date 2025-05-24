@@ -26,7 +26,7 @@ export const createUser = async (req, res) => {
       sameSite: "strict",
       maxAge: 60 * 60 * 1000,
     });
-    return res.status(201).json({ succes: "ok", data: { email, name } });
+    return res.status(201).json({ success: "ok", data: { email, name } });
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({ error: err.message });
