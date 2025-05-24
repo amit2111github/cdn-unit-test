@@ -7,7 +7,7 @@
   "scripts": {
     "test": "vitest",
     "dev": "pm2 restart cdn-unit || pm2 start server.js --name cdn-unit",
-    "run": "pm2 restart cdn-unit || pm2 start server.js --name cdn-unit"
+    "start": "pm2 restart cdn-unit || pm2 start server.js --name cdn-unit"
   },
   "keywords": [],
   "author": "",
