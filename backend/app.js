@@ -14,7 +14,7 @@ app.use(fileUpload());
 app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 
 app.get("/health", (_, res) => {
-  res.status(200).json({ staus: "health" });
+  res.status(200).json({ staus: "health" , text :"Hi" , success : "ok" });
 });
 
 app.use("/user", userRouter);
