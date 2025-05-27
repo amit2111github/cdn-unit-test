@@ -3,7 +3,8 @@ import {
   getVideos,
   insertVideoMetadata,
 } from "../accessor/video.js";
-import { getSignedUrl, uploadObject } from "../clients/s3.js";
+import { uploadObject } from "../clients/s3.js";
+import { getMultimediaUrl } from "../utils/index.js";
 
 export const addVideo = async (req, res) => {
   try {
@@ -42,8 +43,7 @@ export const getAllVideos = async (req, res) => {
     const { limit, offset } = req.query;
     const { rows: data } = await getVideos({ limit, offset });
     const keys = [...data.map(({ thumbnail }) => thumbnail)];
-    const keyVsSignedUrl = await getSignedUrl(keys);
-
+    const keyVsSignedUrl = getMultimediaUrl(keys);
     return res.status(200).json({
       success: "ok",
       data: data.map((d) => ({ ...d, thumbnail: keyVsSignedUrl[d.thumbnail] })),
@@ -61,7 +61,7 @@ export const getVideo = async (req, res) => {
     } = await getVideoFromVideoId({ videoId });
     if (!video) return res.status(404).json({ error: "Video Not Found" });
     const keys = [video.thumbnail, video.video];
-    const keyVsSignedUrl = await getSignedUrl(keys);
+    const keyVsSignedUrl = getMultimediaUrl(keys);
     return res.status(200).json({
       success: "ok",
       data: {

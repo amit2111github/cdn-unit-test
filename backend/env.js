@@ -15,3 +15,5 @@ export const AWS_S3_BUCKET = process.env.AWS_S3_BUCKET;
 export const AWS_REGION = process.env.AWS_REGION;
 export const FRONTEND_URL = process.env.FRONTEND_URL;
 export const ENV = process.env.ENV;
+export const CLOUDFRONT_URL = process.env.CLOUDFRONT_URL;
+export const CLOUDFRONT_PUBLIC_KEY_ID = process.env.CLOUDFRONT_PUBLIC_KEY_ID;

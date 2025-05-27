@@ -16,6 +16,9 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > backend/.env
           echo "ENV=test" >> backend/.env
+          mkdir -p backend/cloudfront-key/private_key.pem
+          echo "${{ secrets.CLOUDFRONT_PRIVATE_KEY}}" > backend/cloudfront-key/private_key.pem
+          echo "ENV=test" >> backend/.env
           echo "printing .env file"
           cat backend/.env
 
@@ -92,6 +95,8 @@ jobs:
             cd backend
             echo "${{ secrets.ENV_FILE }}" > .env
             echo "ENV=prod" >> .env
+            mkdir -p cloudfront-key/private_key.pem
+            echo "${{ secrets.CLOUDFRONT_PRIVATE_KEY}}" > cloudfront-key/private_key.pem
             npm install --production
             echo "Running npm start"
             npm run start

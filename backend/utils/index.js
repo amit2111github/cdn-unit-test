@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
-import { SECRET_KEY } from "../env.js";
+import { CLOUDFRONT_URL, SECRET_KEY } from "../env.js";
 import jwt from "jsonwebtoken";
 import { ERROR } from "../constant/error.js";
+import { getSignedCloudFrontUrl } from "../clients/cloudfront.js";
 
 export const trimUserDetails = (obj) => {
   for (let key in obj) {
@@ -48,4 +49,12 @@ export const validateJwt = (token) => {
     console.log("JWT validation failed : ", err);
     return 0;
   }
+};
+
+export const getMultimediaUrl = (keys) => {
+  if (!Array.isArray(keys)) return [keys];
+  return keys.reduce((acc, key) => {
+    acc[key] = getSignedCloudFrontUrl(`${CLOUDFRONT_URL}/${key}`);
+    return acc;
+  }, {});
 };

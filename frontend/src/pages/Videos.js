@@ -5,10 +5,21 @@ import api from '../backend/api';
 export default function Videos() {
   const [videos, setVideos] = useState([]);
   const navigate = useNavigate();
-
+  console.log(videos);
   useEffect(() => {
-    api.get('/video').then(res => setVideos(res.data.data));
-  }, []);
+    api.get('/video')
+      .then(res => setVideos(res.data.data))
+      .catch(err => {
+        if (err.response && err.response.status === 401) {
+          // Clear localStorage
+          localStorage.removeItem('user'); // or localStorage.clear() if you want to clear all
+          // Redirect to /signin
+          navigate('/signin');
+        } else {
+          console.error('Failed to fetch videos:', err);
+        }
+      });
+  }, [navigate]);
 
   return (
     <div className="container py-4">
