@@ -78,13 +78,19 @@ jobs:
           echo "ip address is $EC2_IP"
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@$EC2_IP << 'EOF'
             set -e
+            echo "installing node.js"
             if ! command -v node > /dev/null; then
               curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
               sudo apt-get install -y nodejs
             fi
-
+            if ! command -v nginx > /dev/null; then
+              curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+              sudo apt-get install -y nginx
+            fi
+            
             mkdir -p /home/ubuntu/app
             cd /home/ubuntu/app
+            echo "cloning repo"
             if [ ! -d "./.git" ]; then
               echo "No Git repo found. Cloning..."
               echo "cloning "
@@ -93,11 +99,18 @@ jobs:
             git stash
             git pull origin main
             cd backend
+            cat nginx.conf > /etc/nginx/nginx.conf
+            mkdir -p http-certificate
+            echo "adding certficates for https"
+            echo "${{ secrets.CERTIFICATES_PUBLIC }}" >  http-certificate/certificate.crt
+            echo "${{ secrets.CERTIFICATES_PRIVATE }}" >  http-certificate/private.key
+
             echo "${{ secrets.ENV_FILE }}" > .env
             echo "ENV=prod" >> .env
             mkdir -p cloudfront-key
             echo "${{ secrets.CLOUDFRONT_PRIVATE_KEY}}" > cloudfront-key/private_key.pem
             npm install --production
             echo "Running npm start"
+            systemctl restart nginx
             npm run start
           EOF
