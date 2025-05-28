@@ -87,7 +87,21 @@ jobs:
               sudo apt-get update -y
               sudo apt-get install -y nginx
             fi
+            if ! command -v openssl > /dev/null; then
+              echo "❌ OpenSSL is not installed. Installing..."
+              sudo apt-get update -y
+              sudo apt-get install -y openssl
+            fi
             
+            echo "🔐 Generating self-signed SSL certificate"
+            sudo mkdir -p /etc/nginx/ssl
+
+            sudo openssl req -x509 -nodes -days 365 \
+              -newkey rsa:2048 \
+              -keyout /etc/nginx/ssl/selfsigned.key \
+              -out /etc/nginx/ssl/selfsigned.crt \
+              -subj "/C=IN/ST=UP/L=City/O=Company/OU=Org/CN=amit"
+
             mkdir -p /home/ubuntu/app
             cd /home/ubuntu/app
             echo "cloning repo"
@@ -100,11 +114,7 @@ jobs:
             git pull origin main
             cd backend
             sudo tee /etc/nginx/nginx.conf < nginx.conf > /dev/null
-            mkdir -p http-certificate
-            echo "adding certficates for https"
-            echo "${{ secrets.CERTIFICATES_PUBLIC }}" >  http-certificate/certificate.crt
-            echo "${{ secrets.CERTIFICATES_PRIVATE }}" >  http-certificate/private.key
-
+            
             echo "${{ secrets.ENV_FILE }}" > .env
             echo "ENV=prod" >> .env
             mkdir -p cloudfront-key
