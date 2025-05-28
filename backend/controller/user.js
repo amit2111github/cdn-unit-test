@@ -23,7 +23,8 @@ export const createUser = async (req, res) => {
     const token = generateToken({ email, name });
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "None",
+      secure : "true",
       maxAge: 60 * 60 * 1000,
     });
     return res.status(201).json({ success: "ok", data: { email, name } });
@@ -49,7 +50,8 @@ export const signin = async (req, res) => {
     const token = generateToken({ email: user.email, name: user.name });
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "None",
+      secure : true,
       maxAge: 60 * 60 * 1000,
     });
     return res
