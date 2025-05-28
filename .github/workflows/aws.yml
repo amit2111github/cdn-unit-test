@@ -84,7 +84,7 @@ jobs:
               sudo apt-get install -y nodejs
             fi
             if ! command -v nginx > /dev/null; then
-              curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+              sudo apt-get update -y
               sudo apt-get install -y nginx
             fi
             
@@ -99,7 +99,7 @@ jobs:
             git stash
             git pull origin main
             cd backend
-            cat nginx.conf > /etc/nginx/nginx.conf
+            sudo cat nginx.conf > /etc/nginx/nginx.conf
             mkdir -p http-certificate
             echo "adding certficates for https"
             echo "${{ secrets.CERTIFICATES_PUBLIC }}" >  http-certificate/certificate.crt
@@ -111,6 +111,6 @@ jobs:
             echo "${{ secrets.CLOUDFRONT_PRIVATE_KEY}}" > cloudfront-key/private_key.pem
             npm install --production
             echo "Running npm start"
-            systemctl restart nginx
+            sudo systemctl restart nginx
             npm run start
           EOF
